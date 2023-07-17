@@ -3,8 +3,11 @@ import logging
 
 from aiogram import Dispatcher, Bot
 from aiogram.fsm.storage.memory import MemoryStorage
+
+from handler.countries import countryHandler
 from handler.start import startingHandler
 from config.configurations import TOKEN
+from handler.worlds import userUpdateKeyboard
 
 
 async def main():
@@ -16,6 +19,8 @@ async def main():
     dp = Dispatcher(storage=MemoryStorage())
     bot = Bot(TOKEN)
     dp.include_router(startingHandler.router)
+    dp.include_router(userUpdateKeyboard.router)
+    dp.include_router(countryHandler.router)
     # dp.include_router(common.router)
 
     try:

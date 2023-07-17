@@ -15,11 +15,12 @@ router = Router()
 # router.callback_query.middleware(WeekendCallbackMiddleware())
 
 
-@router.callback_query(lambda c: c.data.startswith == 'world_')
+@router.callback_query(lambda c: c.data.startswith('world_'))
 async def update_keyboard_worlds(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.message.edit_reply_markup()
     split_callback_data = callback_query.data.split('_')
     world_id = split_callback_data[1]
+    print(f"world_id = {world_id}")
     world = r.get(f"{REQUEST_URL_WORLD}/world?worldId={world_id}").json()['worldInfo']
     # worlds = r.get(f"{REQUEST_URL_GAME}/worlds").json()
     await state.set_state(WorldStates.after_choose_world)
@@ -27,8 +28,11 @@ async def update_keyboard_worlds(callback_query: CallbackQuery, state: FSMContex
     await state.update_data(world=world)
 
     await callback_query.message.edit_text(
-        text=f"Мир {world['title']}\n\n"
-             f"🔦 Выберите действие",
+        text=f"🌍 Мир 🌍\n"
+             f"{world['title']}\n\n"
+             f"🗺️ Выберите страну",
         inline_message_id=callback_query.inline_message_id,
         reply_markup=in_World_menu(world['id'])
     )
+
+
