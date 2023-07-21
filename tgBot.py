@@ -4,7 +4,7 @@ import logging
 from aiogram import Dispatcher, Bot
 from aiogram.fsm.storage.memory import MemoryStorage
 
-from handler import menuDevelopmentHandler
+from handler import menuDevelopmentHandler, menuShieldHandler, menuNuclearHandler
 from handler.countries import countryHandler
 from handler.start import startingHandler
 from config.configurations import TOKEN
@@ -23,6 +23,8 @@ async def main():
     dp.include_router(userUpdateKeyboard.router)
     dp.include_router(countryHandler.router)
     dp.include_router(menuDevelopmentHandler.router)
+    dp.include_router(menuShieldHandler.router)
+    dp.include_router(menuNuclearHandler.router)
     # dp.include_router(common.router)
 
     try:

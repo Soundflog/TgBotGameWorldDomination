@@ -42,19 +42,19 @@ async def message_handler_country(message: Message, state: CountryStates.passwor
             city_Info = {}
             if country_Info['countryId'] == country_id:
                 city_Info = country_Info['friendlyCities']
-            textForEdited = f"🌍 Мир 🌍\n"\
-                     f"{world['title']}\n"\
-                     f"🌱 Экология: <b>{round(world['ecology'], 2)} %</b>\n\n"\
-                     f"🗺️ Страна 🗺️\n"\
-                     f"<b>{country_Info['title']}</b>\n\n"\
-                     f"⚖️ Баланс: <b>{country_Info['balanceInfo']}</b>\n"\
-                     f"🚀 Ракет: <b>{country_Info['rocket']}</b> | {country_Info['rocketInfo']}\n\n"\
-                     f"🏙️ Города 🏙️\n"
+            textForEdited = f"🌍 Мир 🌍\n" \
+                            f"{world['title']}\n" \
+                            f"🌱 Экология: <b>{round(world['ecology'], 2)} %</b>\n\n" \
+                            f"🗺️ Страна 🗺️\n" \
+                            f"<b>{country_Info['title']}</b>\n\n" \
+                            f"💸 Баланс: <b>{country_Info['balanceInfo']} 💲</b>\n" \
+                            f"🚀 Ракет: <b>{country_Info['rocket']}</b> | {country_Info['rocketInfo']}\n\n" \
+                            f"🏙️ Города 🏙️\n"
             for city in city_Info:
-                textForEdited += f"<b>{city['title']}</b>\n"\
-                     f"🌿 Ур. жизни: {city['lifestandard']}\n"\
-                     f"Состояние: {'✅' if city['condition'] else '🔴'}\n"\
-                     f"Щит: {'✅' if city['shield'] else '🔴'}\n\n"
+                textForEdited += f"<b>{city['title']}</b>\n" \
+                                 f"🌿 Ур. жизни: {city['lifestandard']} %\n" \
+                                 f"Состояние: {'✔️ ' if city['condition'] else '❌'}\n" \
+                                 f"🛡️ Щит: {'✔️ ' if city['shieldInfo'] else '❌'} ---> {'✔️' if city['shield'] else '❌'}\n\n"
             # f"🌍 Мир 🌍\n"
             #                      f"{world['title']}\n"
             #                      f"🌱 Экология: <b>{round(world['ecology'], 2)} %</b>\n\n"
@@ -80,6 +80,7 @@ async def message_handler_country(message: Message, state: CountryStates.passwor
             #                      f"🌿 Ур. жизни: {city_Info[3]['lifestandard']}\n"
             #                      f"Состояние: {'✅' if city_Info[3]['condition'] else '🔴'}\n"
             #                      f"Щит: {'✅' if city_Info[3]['shield'] else '🔴'}"
+            await message.delete()
             await message.answer(
                 text=textForEdited,
                 parse_mode=ParseMode.HTML,

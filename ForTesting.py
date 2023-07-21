@@ -52,4 +52,8 @@ for i, city in enumerate(city_info):
     print(f"{i}: {city['title']}")
 
 lvllife = f"{str(city_info[0]['lifestandard']) + ' + 20 %'}"
-print(lvllife)
+listTest = [1]
+if 3 >= len(listTest) > 0:
+    listTest.remove(1)
+    print(f"list less 3: {len(listTest)}")
+print(listTest)
