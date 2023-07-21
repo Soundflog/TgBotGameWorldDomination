@@ -22,10 +22,8 @@ async def menu_callback(call: CallbackQuery, state: CountryStates.main_keyboard)
                     f"🏙️<b>Развитие городов</b>🏙️\n" \
                     f"<b>150 💲</b>\n\n"
     for city in city_Info:
-        textForEdited += f"<b>{city['title']}</b>\n" \
-                         f"🌿 Ур. жизни: {str(city['lifestandard']) + ' + 20 ' if city['development'] else city['lifestandard']} %\n" \
-                         f"Состояние: {'✔️ ' if city['condition'] else '❌'}\n" \
-                         f"🛡️ Щит: {'✔️ ' if city['shieldInfo'] else '❌'} ---> {'✔️' if city['shield'] else '❌'}\n\n"
+        textForEdited += f"<b>{city['title'] if city['condition'] else '<s>' + city['title'] + '</s>'}</b>\n" \
+                         f"🌿 Ур. жизни: {str(city['lifestandard']) + ' + 20 ' if city['development'] else city['lifestandard']} %\n\n"
     await call.message.edit_text(
         text=textForEdited,
         parse_mode=ParseMode.HTML,
@@ -71,10 +69,8 @@ async def callback_city_development(call: CallbackQuery, state: CountryStates.ma
                     f"💸 {country_Info['balanceInfo']} 💲\n\n" \
                     f"🏙️<b>Развитие городов</b>🏙️\n"
     for city in city_Info:
-        textForEdited += f"<b>{city['title']}</b>\n" \
-                         f"🌿 Ур. жизни: {str(city['lifestandard']) + ' + 20 ' if city['development'] else city['lifestandard']} %\n" \
-                         f"Состояние: {'✔️' if city['condition'] else '❌'}\n" \
-                         f"🛡️ Щит: {'✔️ ' if city['shieldInfo'] else '❌'} ---> {'✔️' if city['shield'] else '❌'}\n\n"
+        textForEdited += f"<b>{city['title'] if city['condition'] else '<s>' + city['title'] + '</s>'}</b>\n" \
+                         f"🌿 Ур. жизни: {str(city['lifestandard']) + ' + 20 ' if city['development'] else city['lifestandard']} %\n\n"
 
     await call.message.edit_text(
         text=textForEdited,
@@ -103,10 +99,8 @@ async def callback_dev_back_to_menu(call: CallbackQuery, state: CountryStates.ma
                     f"🚀 Ракет: <b>{country_Info['rocket']}</b> | {country_Info['rocketInfo']}\n\n" \
                     f"🏙️ Города 🏙️\n"
     for city in city_Info:
-        textForEdited += f"<b>{city['title']}</b>\n" \
-                         f"🌿 Ур. жизни: {str(city['lifestandard']) + ' + 20 ' if city['development'] else city['lifestandard']}%\n" \
-                         f"Состояние: {'✔️' if city['condition'] else '❌'}\n" \
-                         f"🛡️ Щит: {'✔️ ' if city['shieldInfo'] else '❌'} ---> {'✔️' if city['shield'] else '❌'}\n\n"
+        textForEdited += f"<b>{city['title'] if city['condition'] else '<s>' + city['title'] + '</s>'}</b>\n" \
+                         f"🌿 Ур. жизни: {str(city['lifestandard']) + ' + 20 ' if city['development'] else city['lifestandard']} %\n\n"
     await call.message.edit_text(
         text=textForEdited,
         inline_message_id=call.inline_message_id,

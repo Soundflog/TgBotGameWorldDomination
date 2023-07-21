@@ -1,8 +1,11 @@
+from contextlib import suppress
+
 from aiogram import Router
 from aiogram.enums import ParseMode
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import CallbackQuery
 
-from buttons.inlinebuttons.FormMainButton import in_Form_Shield_TrueFalse, in_Form_Nuclear_TrueFalse, \
+from buttons.inlinebuttons.FormMainButton import in_Form_Nuclear_TrueFalse, \
     in_Form_Bomb_Enemy, in_Form_Bomb_Enemy_Cities
 from states.WorldStates import CountryStates
 
@@ -24,7 +27,8 @@ async def nuclear_menu_callback(call: CallbackQuery, state: CountryStates.main_k
                     f"Цены: \n" \
                     f"Развитие --- <b> 500 💲</b>\n" \
                     f"Ракета --- <b> 150 💲</b>\n\n"
-    textForEdited += f"Развита ядерная программа: {country_Info['nuclearProgramInfo']} ---> {country_Info['nuclearProgram']}\n" \
+    textForEdited += f"Развита ядерная программа: {'✔️' if country_Info['nuclearProgramInfo'] else '❌'} " \
+                     f"---> {'✔️' if country_Info['nuclearProgram'] else '❌'}\n" \
                      f"Ракет: {country_Info['rocketInfo']} ---> {country_Info['rocket']}"
     await call.message.edit_text(
         text=textForEdited,
@@ -185,7 +189,8 @@ async def callback_nuclear_bomb(call: CallbackQuery, state: CountryStates.main_k
     textForEdited += f"Развита ядерная программа: " \
                      f"{'✔️' if country_Info['nuclearProgramInfo'] else '❌'} ---> " \
                      f"{'✔️' if country_Info['nuclearProgram'] else '❌'}\n" \
-                     f"Ракет: {country_Info['rocketInfo']} ---> {country_Info['rocket']}"
+                     f"Ракет: {country_Info['rocketInfo']} + {country_Info['rocket']}\n\n" \
+                     f"<i>Кол-во ракет считается: кол-во ракет с прошлого раунда + кол-во ракет в производстве</i>"
     if country_Info['rocketInfo'] > 0:
         await call.message.edit_text(
             text=textForEdited,
@@ -202,28 +207,74 @@ async def callback_nuclear_bomb(call: CallbackQuery, state: CountryStates.main_k
 
 # =================================== ВЫБОР КАКУЮ СТРАНУ БОМБИТЬ ==================
 @router.callback_query(lambda c: c.data.startswith("country_bomb_"), CountryStates.main_keyboard)
-async def callback_nuclear_bomb(call: CallbackQuery, state: CountryStates.main_keyboard):
+async def callback_nuclear_bomb_to_country(call: CallbackQuery, state: CountryStates.main_keyboard):
     user_data = await state.get_data()
     getFormCountry = user_data['form']
     country_Info = getFormCountry['form']
     split_callback_data = call.data.split('_')
     country_id_for_bomb = int(split_callback_data[2])
     enemy_Countries = country_Info['enemyCountries']
+    textForEdited = "Произошла ошибка"
+    enemy_cities = []
     for enemyCountry in enemy_Countries:
         if enemyCountry['countryId'] == country_id_for_bomb:
-            textForEdited = f"БОМБИТЬ\n" \
-                            f"{enemyCountry['title']}\n\n" \
-                            f"ГОРОДА\n"
+            textForEdited = f"💥 БОМБИТЬ 💥\n" \
+                            f"<b>{enemyCountry['title']}</b>\n\n" \
+                            f"🏙️ ГОРОДА 🏙️\n"
             for enemyCity in enemyCountry['enemyCities']:
-                textForEdited += f"<b>{enemyCity['title']}</b>\n" \
+                enemy_cities.append(enemyCity)
+                textForEdited += f"<b>{enemyCity['title'] if enemyCity['condition'] else '<s>' + enemyCity['title'] + '</s>'}</b>\n" \
                                  f"🌿 Ур. жизни: {enemyCity['lifestandard']} %\n" \
-                                 f"Состояние: {'✔️' if enemyCity['condition'] else '❌'}\n" \
                                  f"💣 Отправлена бомба: {'✔️' if enemyCity['bomb'] else '❌'}\n\n"
-            await call.message.edit_text(
-                text=textForEdited,
-                parse_mode=ParseMode.HTML,
-                inline_message_id=call.inline_message_id,
-                reply_markup=in_Form_Bomb_Enemy_Cities(enemyCountry['enemyCities'])
-            )
         continue
+    await state.update_data(country_id_for_bomb=country_id_for_bomb)
+    await call.message.edit_text(
+        text=textForEdited,
+        parse_mode=ParseMode.HTML,
+        inline_message_id=call.inline_message_id,
+        reply_markup=in_Form_Bomb_Enemy_Cities(enemy_cities)
+    )
     await call.answer()
+
+
+# =================================== БОМБИТЬ ГОРОД ==================
+@router.callback_query(lambda c: c.data.startswith("city_bomb_"), CountryStates.main_keyboard)
+async def callback_nuclear_bomb_to_city(call: CallbackQuery, state: CountryStates.main_keyboard):
+    user_data = await state.get_data()
+    getFormCountry = user_data['form']
+    country_Info = getFormCountry['form']
+    split_callback_data = call.data.split('_')
+    city_id_for_bomb = int(split_callback_data[2])
+    enemy_Countries = country_Info['enemyCountries']
+    enemy_cities = []
+    enemyCountryById = {}
+    for enemyCountry in enemy_Countries:
+        if enemyCountry['countryId'] == user_data['country_id_for_bomb']:
+            enemyCountryById.update(enemyCountry)
+            for city_enemy in enemyCountry['enemyCities']:
+                if city_enemy['cityId'] == city_id_for_bomb:
+                    if city_enemy['bomb'] is False and country_Info['rocketInfo'] > 0:
+                        country_Info['rocketInfo'] -= 1
+                        city_enemy['bomb'] = True
+                    elif city_enemy['bomb'] is True:
+                        country_Info['rocketInfo'] += 1
+                        city_enemy['bomb'] = False
+                enemy_cities.append(city_enemy)
+    txtForEdited = f"💥 БОМБИТЬ 💥\n" \
+                   f"<b>{enemyCountryById['title']}</b>\n\n" \
+                   f"🚀 Кол-во ракет: {country_Info['rocketInfo']}\n\n" \
+                   f"🏙️ ГОРОДА 🏙️\n"
+    for eCity in enemy_cities:
+        txtForEdited += f"<b>{eCity['title'] if eCity['condition'] else '<s>' + eCity['title'] + '</s>'}</b>\n" \
+                        f"🌿 Ур. жизни: {eCity['lifestandard']} %\n" \
+                        f"💣 Отправлена бомба: {'✔️' if eCity['bomb'] else '❌'}\n\n"
+    await call.answer(
+        text=f"Ракет: {country_Info['rocketInfo']}"
+    )
+    with suppress(TelegramBadRequest):
+        await call.message.edit_text(
+            text=txtForEdited,
+            inline_message_id=call.inline_message_id,
+            parse_mode=ParseMode.HTML,
+            reply_markup=in_Form_Bomb_Enemy_Cities(enemy_cities)
+        )

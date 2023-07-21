@@ -60,7 +60,7 @@ def in_Form_Nuclear_TrueFalse(formRound):
             InlineKeyboardButton(text="Развить ядерную программу", callback_data="rocket_development")
         )
     keyboard.add(
-        InlineKeyboardButton(text="<< Меню", callback_data="rocket_back_to_menu")
+        InlineKeyboardButton(text="<< Меню", callback_data="shield_menu")
     )
     keyboard.adjust(1)
     return keyboard.as_markup()
@@ -73,7 +73,7 @@ def in_Form_Bomb_Enemy(enemyCountries):
             InlineKeyboardButton(text=f"{enemy['title']}", callback_data=f"country_bomb_{enemy['countryId']}")
         )
     keyboard.add(
-        InlineKeyboardButton(text="<< Меню", callback_data="rocket_back_to_menu")
+        InlineKeyboardButton(text="<< Меню", callback_data="shield_menu")
     )
     keyboard.adjust(1)
     return keyboard.as_markup()
@@ -82,11 +82,12 @@ def in_Form_Bomb_Enemy(enemyCountries):
 def in_Form_Bomb_Enemy_Cities(enemyCities):
     keyboard = InlineKeyboardBuilder()
     for enemy in enemyCities:
-        keyboard.add(
-            InlineKeyboardButton(text=f"{enemy['title']}", callback_data=f"city_bomb_{enemy['cityId']}")
-        )
+        if enemy['condition']:
+            keyboard.add(
+                InlineKeyboardButton(text=f"{enemy['title']}", callback_data=f"city_bomb_{enemy['cityId']}")
+            )
     keyboard.add(
-        InlineKeyboardButton(text="<< Меню", callback_data="rocket_back_to_menu")
+        InlineKeyboardButton(text="<< Меню", callback_data="shield_menu")
     )
     keyboard.adjust(1)
     return keyboard.as_markup()

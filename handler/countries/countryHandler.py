@@ -48,12 +48,11 @@ async def message_handler_country(message: Message, state: CountryStates.passwor
                             f"🗺️ Страна 🗺️\n" \
                             f"<b>{country_Info['title']}</b>\n\n" \
                             f"💸 Баланс: <b>{country_Info['balanceInfo']} 💲</b>\n" \
-                            f"🚀 Ракет: <b>{country_Info['rocket']}</b> | {country_Info['rocketInfo']}\n\n" \
+                            f"🚀 Ракет: <b>{country_Info['rocketInfo']}</b> + {country_Info['rocket']}\n\n" \
                             f"🏙️ Города 🏙️\n"
             for city in city_Info:
-                textForEdited += f"<b>{city['title']}</b>\n" \
+                textForEdited += f"<b>{city['title'] if city['condition'] else '<s>' + city['title'] + '</s>'}</b>\n" \
                                  f"🌿 Ур. жизни: {city['lifestandard']} %\n" \
-                                 f"Состояние: {'✔️ ' if city['condition'] else '❌'}\n" \
                                  f"🛡️ Щит: {'✔️ ' if city['shieldInfo'] else '❌'} ---> {'✔️' if city['shield'] else '❌'}\n\n"
             # f"🌍 Мир 🌍\n"
             #                      f"{world['title']}\n"
