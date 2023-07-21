@@ -20,7 +20,6 @@ async def update_keyboard_worlds(callback_query: CallbackQuery, state: FSMContex
     await callback_query.message.edit_reply_markup()
     split_callback_data = callback_query.data.split('_')
     world_id = split_callback_data[1]
-    print(f"world_id = {world_id}")
     world = r.get(f"{REQUEST_URL_WORLD}/world?worldId={world_id}").json()['worldInfo']
     # worlds = r.get(f"{REQUEST_URL_GAME}/worlds").json()
     await state.set_state(WorldStates.after_choose_world)

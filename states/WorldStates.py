@@ -8,3 +8,4 @@ class WorldStates(StatesGroup):
 
 class CountryStates(StatesGroup):
     password = State()
+    main_keyboard = State()

@@ -1,12 +1,10 @@
+import requests as r
 from aiogram import Router
 from aiogram.enums import ParseMode
-from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
-import requests as r
-import json
 
-from buttons.inlinebuttons.chooseWorld import in_World_menu
-from config.configurations import REQUEST_URL_GAME, REQUEST_URL_WORLD
+from buttons.inlinebuttons.FormMainButton import in_Form_Main_Keyboard
+from config.configurations import REQUEST_URL_WORLD, REQUEST_URL_FORM
 from states.WorldStates import WorldStates, CountryStates
 
 router = Router()
@@ -36,40 +34,60 @@ async def message_handler_country(message: Message, state: CountryStates.passwor
         country_id = user_data['country_id']
 
         dataForPost = {"id": 0, "countryid": country_id, "password": str(message.text)}
-        d = json.dumps(dataForPost)
-        answerFromPassword = r.post(f"{REQUEST_URL_WORLD}/countrypassword", data=dataForPost)
+        answerFromPassword = r.post(f"{REQUEST_URL_WORLD}/countrypassword", json=dataForPost)
         if answerFromPassword.ok:
-            array_country_Info = world['countryInfos']
-            country_Info = {}
+            getFormCountry = r.get(f"{REQUEST_URL_FORM}/getFormCountry?countryId={country_id}").json()
+            country_Info = getFormCountry['form']
+            # ecology_info = country_Info['ecology']
             city_Info = {}
-            for country in array_country_Info:
-                print(f"country id: {country['id']}")
-                if country['id'] == country_id:
-                    print("Successful")
-                    country_Info = country
-                    city_Info = country['cityInfos']
-                    break
-            if country_Info is None or city_Info is None:
-                await message.answer(
-                    text="Произошла ошибка\n"
-                         "Такой страны не существует или у страны нет городов"
-                )
-
-            await message.edit_text(
-                text=f"🌍 Мир 🌍\n"
-                     f"{world['title']}\n\n"
-                     f"🗺️ Страна 🗺️\n"
-                     f"{country_Info['title']}\n\n"
-                     f"⚖️ Баланс: {country_Info['balance']}\n"
-                     f"🌿 Уровень жизни: {country_Info['lifestandard']} %\n"
-                     f"🚀 Ракет: {country_Info['rocket']}\n\n"
+            if country_Info['countryId'] == country_id:
+                city_Info = country_Info['friendlyCities']
+            textForEdited = f"🌍 Мир 🌍\n"\
+                     f"{world['title']}\n"\
+                     f"🌱 Экология: <b>{round(world['ecology'], 2)} %</b>\n\n"\
+                     f"🗺️ Страна 🗺️\n"\
+                     f"<b>{country_Info['title']}</b>\n\n"\
+                     f"⚖️ Баланс: <b>{country_Info['balanceInfo']}</b>\n"\
+                     f"🚀 Ракет: <b>{country_Info['rocket']}</b> | {country_Info['rocketInfo']}\n\n"\
                      f"🏙️ Города 🏙️\n"
-                     f"1: {city_Info[0]['title']}\n"
-                     f"2: {city_Info[1]['title']}\n"
-                     f"3: {city_Info[2]['title']}\n"
-                     f"4: {city_Info[3]['title']}",
-                chat_id=message.chat.id
+            for city in city_Info:
+                textForEdited += f"<b>{city['title']}</b>\n"\
+                     f"🌿 Ур. жизни: {city['lifestandard']}\n"\
+                     f"Состояние: {'✅' if city['condition'] else '🔴'}\n"\
+                     f"Щит: {'✅' if city['shield'] else '🔴'}\n\n"
+            # f"🌍 Мир 🌍\n"
+            #                      f"{world['title']}\n"
+            #                      f"🌱 Экология: <b>{round(world['ecology'], 2)} %</b>\n\n"
+            #                      f"🗺️ Страна 🗺️\n"
+            #                      f"<b>{country_Info['title']}</b>\n\n"
+            #                      f"⚖️ Баланс: <b>{country_Info['balanceInfo']}</b>\n"
+            #                      # f"🌿 Уровень жизни: <b>{country_Info['lifestandard']} %</b>\n"
+            #                      f"🚀 Ракет: <b>{country_Info['rocket']}</b> | {country_Info['rocketInfo']}\n\n"
+            #                      f"🏙️ Города 🏙️\n"
+            #                      f"1: <b>{city_Info[0]['title']}</b>\n"
+            #                      f"🌿 Ур. жизни: {city_Info[0]['lifestandard']}\n"
+            #                      f"Состояние: {'✅' if city_Info[0]['condition'] else '🔴'}\n"
+            #                      f"Щит: {'✅' if city_Info[0]['shield'] else '🔴'}\n\n"
+            #                      f"2: <b>{city_Info[1]['title']}</b>\n"
+            #                      f"🌿 Ур. жизни: {city_Info[1]['lifestandard']}\n"
+            #                      f"Состояние: { '✅' if city_Info[1]['condition'] else '🔴'}\n"
+            #                      f"Щит: {'✅' if city_Info[1]['shield'] else '🔴'}\n\n"
+            #                      f"3: <b>{city_Info[2]['title']}</b>\n"
+            #                      f"🌿 Ур. жизни: {city_Info[2]['lifestandard']}\n"
+            #                      f"Состояние: {'✅' if city_Info[2]['condition'] else '🔴'}\n"
+            #                      f"Щит: {'✅' if city_Info[2]['shield'] else '🔴'}\n\n"
+            #                      f"4: <b>{city_Info[3]['title']}</b>\n"
+            #                      f"🌿 Ур. жизни: {city_Info[3]['lifestandard']}\n"
+            #                      f"Состояние: {'✅' if city_Info[3]['condition'] else '🔴'}\n"
+            #                      f"Щит: {'✅' if city_Info[3]['shield'] else '🔴'}"
+            await message.answer(
+                text=textForEdited,
+                parse_mode=ParseMode.HTML,
+                reply_markup=in_Form_Main_Keyboard()
             )
+            await state.clear()
+            await state.set_state(CountryStates.main_keyboard)
+            await state.update_data(form=getFormCountry, world=world)
             return
         await message.answer(text=f"Код ошибки:\n{answerFromPassword.status_code}")
 
