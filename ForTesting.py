@@ -47,16 +47,31 @@ for i, (city, button) in enumerate(zip(city_info, testKeyboard)):
     button.append("-1")
     button.append(f"{i}: {city['title']}")
     button.append("+1")
-print(testKeyboard)
 
-for i, city in enumerate(city_info):
-    print(f"{i}: {city['title']}")
 
-lvllife = f"{str(city_info[0]['lifestandard']) + ' + 20 %'}"
-listTest = [1]
-if 3 >= len(listTest) > 0:
-    listTest.remove(1)
-    print(f"list less 3: {len(listTest)}")
+
+
+
+
+
+
+
+
+
+
+
+dictList = {
+    "id": 0,
+    "list": [
+        1,
+        1,
+        1,
+        1,
+        1,
+    ],
+    "count": 1+1-1
+}
+
+listTest = [1, 1, 1]
+
 print(listTest)
-
-print(f"\n\n id: {config.configurations.admins['id']}")

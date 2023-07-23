@@ -7,6 +7,7 @@ from aiogram.types import CallbackQuery
 
 from buttons.inlinebuttons.FormMainButton import in_Form_Nuclear_TrueFalse, \
     in_Form_Bomb_Enemy, in_Form_Bomb_Enemy_Cities
+from methods import ReCalcBalance
 from states.WorldStates import CountryStates
 
 router = Router()
@@ -85,16 +86,16 @@ async def callback_nuclear_add(call: CallbackQuery, state: CountryStates.main_ke
                  "Развитие ядерной программы 1 раунд",
             show_alert=True
         )
-    selected_rocket_add = user_data.get('selectedRocketAdd')
-    if selected_rocket_add is not None:
-        selected_rocket_add = user_data['selectedRocketAdd']
+    count_rocket_add = user_data.get('selectedRocketAdd')
+    if count_rocket_add is not None:
+        count_rocket_add = user_data['selectedRocketAdd']
     else:
-        selected_rocket_add = []
+        count_rocket_add = country_Info['rocket']
     # TODO: *FIX* длина массива проходить if всегда
-    if country_Info['nuclearProgramInfo'] is True and len(selected_rocket_add) < 3:
+    if country_Info['nuclearProgramInfo'] is True and count_rocket_add < 3:
         country_Info['rocket'] += 1
         country_Info['balanceInfo'] -= 150
-        selected_rocket_add.append(1)
+        count_rocket_add += 1
         await call.answer(
             text="+1 Ракета"
         )
@@ -115,7 +116,7 @@ async def callback_nuclear_add(call: CallbackQuery, state: CountryStates.main_ke
             inline_message_id=call.inline_message_id,
             reply_markup=in_Form_Nuclear_TrueFalse(country_Info)
         )
-        await state.update_data(selectedRocketAdd=selected_rocket_add)
+        await state.update_data(selectedRocketAdd=count_rocket_add)
     else:
         await call.answer(
             text="Не больше 3 ракет за раунд"
@@ -135,18 +136,19 @@ async def callback_nuclear_remove(call: CallbackQuery, state: CountryStates.main
                  "Развитие ядерной программы 1 раунд",
             show_alert=True
         )
-    selected_rocket_add = user_data.get('selectedRocketAdd')
-    if selected_rocket_add is not None:
-        selected_rocket_add = user_data['selectedRocketAdd']
+    count_rocket_add = user_data.get('selectedRocketAdd')
+    if count_rocket_add is not None:
+        count_rocket_add = user_data['selectedRocketAdd']
     else:
-        selected_rocket_add = []
-    if country_Info['nuclearProgramInfo'] is True and 3 > len(selected_rocket_add) > 0:
+        count_rocket_add = country_Info['rocket']
+    if country_Info['nuclearProgramInfo'] is True and 3 > count_rocket_add > 0:
         country_Info['rocket'] -= 1
         country_Info['balanceInfo'] += 150
-        selected_rocket_add.remove(1)
+        count_rocket_add -= 1
         await call.answer(
             text="-1 Ракета"
         )
+        ReCalcBalance.BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
         textForEdited = f"🗺️ Страна 🗺️\n" \
                         f"{country_Info['title']}\n" \
                         f"💸 {country_Info['balanceInfo']} 💲\n\n" \
@@ -165,7 +167,7 @@ async def callback_nuclear_remove(call: CallbackQuery, state: CountryStates.main
             inline_message_id=call.inline_message_id,
             reply_markup=in_Form_Nuclear_TrueFalse(country_Info)
         )
-        await state.update_data(selectedRocketAdd=selected_rocket_add)
+        await state.update_data(selectedRocketAdd=count_rocket_add)
     else:
         await call.answer(
             text="Нельзя убрать меньше 0"
@@ -178,6 +180,7 @@ async def callback_nuclear_bomb(call: CallbackQuery, state: CountryStates.main_k
     user_data = await state.get_data()
     getFormCountry = user_data['form']
     country_Info = getFormCountry['form']
+    ReCalcBalance.BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
     textForEdited = f"🗺️ Страна 🗺️\n" \
                     f"{country_Info['title']}\n" \
                     f"💸 {country_Info['balanceInfo']} 💲\n\n" \
@@ -190,18 +193,13 @@ async def callback_nuclear_bomb(call: CallbackQuery, state: CountryStates.main_k
                      f"{'✔️' if country_Info['nuclearProgram'] else '❌'}\n" \
                      f"Ракет: {country_Info['rocketInfo']} + {country_Info['rocket']}\n\n" \
                      f"<i>Кол-во ракет считается: кол-во ракет с прошлого раунда + кол-во ракет в производстве</i>"
-    if country_Info['rocketInfo'] > 0:
-        await call.message.edit_text(
-            text=textForEdited,
-            inline_message_id=call.inline_message_id,
-            parse_mode=ParseMode.HTML,
-            reply_markup=in_Form_Bomb_Enemy(country_Info['enemyCountries'])
-        )
-    else:
-        await call.answer(
-            text="У вас нет ракет",
-            show_alert=True
-        )
+
+    await call.message.edit_text(
+        text=textForEdited,
+        inline_message_id=call.inline_message_id,
+        parse_mode=ParseMode.HTML,
+        reply_markup=in_Form_Bomb_Enemy(country_Info['enemyCountries'])
+    )
 
 
 # =================================== ВЫБОР КАКУЮ СТРАНУ БОМБИТЬ ==================
@@ -218,14 +216,15 @@ async def callback_nuclear_bomb_to_country(call: CallbackQuery, state: CountrySt
     for enemyCountry in enemy_Countries:
         if enemyCountry['countryId'] == country_id_for_bomb:
             textForEdited = f"💥 БОМБИТЬ 💥\n" \
-                            f"<b>{enemyCountry['title']}</b>\n\n" \
+                            f"<b>{enemyCountry['title']}</b>\n" \
+                            f"🚀 Кол-во ракет: {country_Info['rocketInfo']}\n\n" \
                             f"🏙️ ГОРОДА 🏙️\n"
             for enemyCity in enemyCountry['enemyCities']:
                 enemy_cities.append(enemyCity)
                 textForEdited += f"<b>{enemyCity['title'] if enemyCity['condition'] else '<s>' + enemyCity['title'] + '</s>'}</b>\n" \
                                  f"🌿 Ур. жизни: {enemyCity['lifestandard']} %\n" \
                                  f"💣 Отправлена бомба: {'✔️' if enemyCity['bomb'] else '❌'}\n\n"
-        continue
+
     await state.update_data(country_id_for_bomb=country_id_for_bomb)
     await call.message.edit_text(
         text=textForEdited,
@@ -259,6 +258,7 @@ async def callback_nuclear_bomb_to_city(call: CallbackQuery, state: CountryState
                         country_Info['rocketInfo'] += 1
                         city_enemy['bomb'] = False
                 enemy_cities.append(city_enemy)
+    ReCalcBalance.BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
     txtForEdited = f"💥 БОМБИТЬ 💥\n" \
                    f"<b>{enemyCountryById['title']}</b>\n\n" \
                    f"🚀 Кол-во ракет: {country_Info['rocketInfo']}\n\n" \

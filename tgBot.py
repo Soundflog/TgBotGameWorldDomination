@@ -5,7 +5,7 @@ from aiogram import Dispatcher, Bot
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from handler import menuDevelopmentHandler, menuShieldHandler, menuNuclearHandler, menuEcologyHandler, \
-    menuSanctionsHandler, menuMoneyTransferHandler, menuCallHandler
+    menuSanctionsHandler, menuMoneyTransferHandler, menuCallHandler, menuAcceptHandler
 from handler.countries import countryHandler
 from handler.start import startingHandler
 from config.configurations import TOKEN
@@ -30,6 +30,7 @@ async def main():
     dp.include_router(menuSanctionsHandler.router)
     dp.include_router(menuMoneyTransferHandler.router)
     dp.include_router(menuCallHandler.router)
+    dp.include_router(menuAcceptHandler.router)
     # dp.include_router(common.router)
 
     try:

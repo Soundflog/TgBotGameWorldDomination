@@ -3,6 +3,7 @@ from aiogram.enums import ParseMode
 from aiogram.types import CallbackQuery
 
 from buttons.inlinebuttons.FormMainButton import in_Form_Development_TrueFalse, in_Form_Main_Keyboard
+from methods import ReCalcBalance
 from states.WorldStates import CountryStates
 
 router = Router()
@@ -16,6 +17,7 @@ async def menu_callback(call: CallbackQuery, state: CountryStates.main_keyboard)
     getFormCountry = user_data['form']
     country_Info = getFormCountry['form']
     city_Info = country_Info['friendlyCities']
+    ReCalcBalance.BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
     textForEdited = f"🗺️ Страна 🗺️\n" \
                     f"{country_Info['title']}\n" \
                     f"💸 {country_Info['balanceInfo']} 💲\n\n" \
@@ -64,7 +66,7 @@ async def callback_city_development(call: CallbackQuery, state: CountryStates.ma
                 text=f"Отмена повышения ур. жизни в городе {city['title']}"
             )
             continue
-
+    ReCalcBalance.BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
     textForEdited = f"🗺️ Страна 🗺️\n{country_Info['title']}\n" \
                     f"💸 {country_Info['balanceInfo']} 💲\n\n" \
                     f"🏙️<b>Развитие городов</b>🏙️\n"
@@ -90,6 +92,7 @@ async def callback_dev_back_to_menu(call: CallbackQuery, state: CountryStates.ma
     getFormCountry = user_data['form']
     country_Info = getFormCountry['form']
     city_Info = country_Info['friendlyCities']
+    ReCalcBalance.BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
     textForEdited = f"🌍 Мир 🌍\n" \
                     f"{world['title']}\n" \
                     f"🌱 Экология: <b>{round(world['ecology'], 2)} %</b>\n\n" \

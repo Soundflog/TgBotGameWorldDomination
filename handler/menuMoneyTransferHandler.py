@@ -3,6 +3,7 @@ from aiogram.enums import ParseMode
 from aiogram.types import CallbackQuery, Message
 
 from buttons.inlinebuttons.FormMainButton import in_Form_MoneyTransfer
+from methods import ReCalcBalance
 from states.WorldStates import CountryStates
 
 router = Router()
@@ -39,6 +40,7 @@ async def money_choose_enemy_country_transfer_callback(call: CallbackQuery, stat
     user_data = await state.get_data()
     getFormCountry = user_data['form']
     country_Info = getFormCountry['form']
+    ReCalcBalance.BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
     textForEdited = f"🗺️ Страна 🗺️\n" \
                     f"{country_Info['title']}\n" \
                     f"💸 Баланс: {country_Info['balanceInfo']} 💲\n\n" \
@@ -78,6 +80,7 @@ async def message_money_transfer(message: Message, state: CountryStates.main_key
                     if eCountry['countryId'] == idECountry:
                         eCountry['moneyTransfer'] = int(message.text)
             country_Info['balanceInfo'] -= int(message.text)
+            ReCalcBalance.BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
             textForEdited = f"🗺️ Страна 🗺️\n" \
                             f"{country_Info['title']}\n\n" \
                             f"💸 Баланс: {country_Info['balanceInfo']} 💲\n\n" \
@@ -118,6 +121,7 @@ async def clear_moneyTransfer_menu_callback(call: CallbackQuery, state: CountryS
         await call.answer(
             text="Что-то пошло не так, Очистка прошла успешно"
         )
+    ReCalcBalance.BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
     textForEdited = f"🗺️ Страна 🗺️\n" \
                     f"{country_Info['title']}\n" \
                     f"💸 Баланс: {country_Info['balanceInfo']} 💲\n\n" \

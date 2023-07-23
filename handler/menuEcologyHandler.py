@@ -6,6 +6,7 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import CallbackQuery
 
 from buttons.inlinebuttons.FormMainButton import in_Form_Ecology
+from methods import ReCalcBalance
 from states.WorldStates import CountryStates
 
 router = Router()
@@ -19,6 +20,8 @@ async def ecology_menu_callback(call: CallbackQuery, state: CountryStates.main_k
     getFormCountry = user_data['form']
     country_Info = getFormCountry['form']
     ecology = user_data['world']['ecology']
+    ReCalcBalance.BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
+    # country_Info['balanceInfo'] = balance
     textForEdited = f"🗺️ Страна 🗺️\n" \
                     f"{country_Info['title']}\n" \
                     f"💸 {country_Info['balanceInfo']} 💲\n\n" \
@@ -43,26 +46,24 @@ async def ecology_x_callback(call: CallbackQuery, state: CountryStates.main_keyb
     getFormCountry = user_data['form']
     country_Info = getFormCountry['form']
     ecology = user_data['world']['ecology']
-    ecology_list = user_data.get('ecology_x')
-    if ecology_list is not None:
-        ecology_list = user_data['ecology_x']
+    ecology_count = user_data.get('ecology_x')
+    if ecology_count is not None:
+        ecology_count = user_data['ecology_x']
     else:
-        ecology_list = []
-    if len(ecology_list) == 0:
+        ecology_count = country_Info['ecology']
+    if ecology_count == 0:
         # Список пуст
-        ecology_list.append(1)
+        ecology_count += 1
         country_Info['ecology'] += 1
-        country_Info['balanceInfo'] -= 150
     else:
-        if len(ecology_list) >= 3:
+        if ecology_count >= 3:
             await call.answer(
                 text="Больше 3 раз вложиться нельзя"
             )
         else:
-            ecology_list.append(1)
-            country_Info['ecology'] = len(ecology_list)
-            country_Info['balanceInfo'] -= 150
-
+            ecology_count += 1
+            country_Info['ecology'] = ecology_count
+    ReCalcBalance.BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
     textForEdited = f"🗺️ Страна 🗺️\n" \
                     f"{country_Info['title']}\n" \
                     f"💸 {country_Info['balanceInfo']} 💲\n\n" \
@@ -73,7 +74,7 @@ async def ecology_x_callback(call: CallbackQuery, state: CountryStates.main_keyb
                     f"Экология x2 --- <b> 300 💲</b>\n" \
                     f"Экология x3 --- <b> 450 💲</b>\n\n" \
                     f"<i>Кол-во вложений в экологию: <b>{country_Info['ecology']}</b></i>"
-    await state.update_data(ecology_x=ecology_list)
+    await state.update_data(ecology_x=ecology_count)
     with suppress(TelegramBadRequest):
         await call.message.edit_text(
             text=textForEdited,
@@ -89,16 +90,14 @@ async def ecology_remove_callback(call: CallbackQuery, state: CountryStates.main
     getFormCountry = user_data['form']
     country_Info = getFormCountry['form']
     ecology = user_data['world']['ecology']
-    ecology_list = user_data.get('ecology_x')
-    if ecology_list is not None:
-        ecology_list = user_data['ecology_x']
-        amount_ecology = len(ecology_list)
-        country_Info['balanceInfo'] += 150 * amount_ecology
-        ecology_list = []
+    ecology_count = user_data.get('ecology_x')
+    if ecology_count is not None:
+        ecology_count = user_data['ecology_x']
         country_Info['ecology'] = 0
         await call.answer(
             text="Очистка успешно"
         )
+        ReCalcBalance.BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
         textForEdited = f"🗺️ Страна 🗺️\n" \
                         f"{country_Info['title']}\n" \
                         f"💸 {country_Info['balanceInfo']} 💲\n\n" \
@@ -109,7 +108,7 @@ async def ecology_remove_callback(call: CallbackQuery, state: CountryStates.main
                         f"Экология x2 --- <b> 300 💲</b>\n" \
                         f"Экология x3 --- <b> 450 💲</b>\n\n" \
                         f"Кол-во вложений в экологию: {country_Info['ecology']}"
-        await state.update_data(ecology_x=ecology_list)
+        await state.update_data(ecology_x=ecology_count)
         with suppress(TelegramBadRequest):
             await call.message.edit_text(
                 text=textForEdited,
