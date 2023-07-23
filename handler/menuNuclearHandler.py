@@ -140,7 +140,6 @@ async def callback_nuclear_remove(call: CallbackQuery, state: CountryStates.main
         selected_rocket_add = user_data['selectedRocketAdd']
     else:
         selected_rocket_add = []
-    # TODO: *FIX* длина массива проходить if всегда
     if country_Info['nuclearProgramInfo'] is True and 3 > len(selected_rocket_add) > 0:
         country_Info['rocket'] -= 1
         country_Info['balanceInfo'] += 150

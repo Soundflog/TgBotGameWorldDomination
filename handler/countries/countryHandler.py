@@ -54,31 +54,6 @@ async def message_handler_country(message: Message, state: CountryStates.passwor
                 textForEdited += f"<b>{city['title'] if city['condition'] else '<s>' + city['title'] + '</s>'}</b>\n" \
                                  f"🌿 Ур. жизни: {city['lifestandard']} %\n" \
                                  f"🛡️ Щит: {'✔️ ' if city['shieldInfo'] else '❌'} ---> {'✔️' if city['shield'] else '❌'}\n\n"
-            # f"🌍 Мир 🌍\n"
-            #                      f"{world['title']}\n"
-            #                      f"🌱 Экология: <b>{round(world['ecology'], 2)} %</b>\n\n"
-            #                      f"🗺️ Страна 🗺️\n"
-            #                      f"<b>{country_Info['title']}</b>\n\n"
-            #                      f"⚖️ Баланс: <b>{country_Info['balanceInfo']}</b>\n"
-            #                      # f"🌿 Уровень жизни: <b>{country_Info['lifestandard']} %</b>\n"
-            #                      f"🚀 Ракет: <b>{country_Info['rocket']}</b> | {country_Info['rocketInfo']}\n\n"
-            #                      f"🏙️ Города 🏙️\n"
-            #                      f"1: <b>{city_Info[0]['title']}</b>\n"
-            #                      f"🌿 Ур. жизни: {city_Info[0]['lifestandard']}\n"
-            #                      f"Состояние: {'✅' if city_Info[0]['condition'] else '🔴'}\n"
-            #                      f"Щит: {'✅' if city_Info[0]['shield'] else '🔴'}\n\n"
-            #                      f"2: <b>{city_Info[1]['title']}</b>\n"
-            #                      f"🌿 Ур. жизни: {city_Info[1]['lifestandard']}\n"
-            #                      f"Состояние: { '✅' if city_Info[1]['condition'] else '🔴'}\n"
-            #                      f"Щит: {'✅' if city_Info[1]['shield'] else '🔴'}\n\n"
-            #                      f"3: <b>{city_Info[2]['title']}</b>\n"
-            #                      f"🌿 Ур. жизни: {city_Info[2]['lifestandard']}\n"
-            #                      f"Состояние: {'✅' if city_Info[2]['condition'] else '🔴'}\n"
-            #                      f"Щит: {'✅' if city_Info[2]['shield'] else '🔴'}\n\n"
-            #                      f"4: <b>{city_Info[3]['title']}</b>\n"
-            #                      f"🌿 Ур. жизни: {city_Info[3]['lifestandard']}\n"
-            #                      f"Состояние: {'✅' if city_Info[3]['condition'] else '🔴'}\n"
-            #                      f"Щит: {'✅' if city_Info[3]['shield'] else '🔴'}"
             await message.delete()
             await message.answer(
                 text=textForEdited,
