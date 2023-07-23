@@ -5,6 +5,16 @@ import requests as r
 from config.configurations import REQUEST_URL_GAME, REQUEST_URL_WORLD
 
 
+def in_Player_or_Curator():
+    keyboard = InlineKeyboardBuilder()
+    keyboard.add(
+        InlineKeyboardButton(text="Игрок", callback_data="player"),
+        InlineKeyboardButton(text="Ведущий", callback_data="curator")
+    )
+    keyboard.adjust(2)
+    return keyboard.as_markup()
+
+
 def in_Choose_World():
     keyboard = InlineKeyboardBuilder()
     worlds = r.get(f"{REQUEST_URL_GAME}/worlds").json()

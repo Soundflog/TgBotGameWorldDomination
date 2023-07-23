@@ -99,7 +99,7 @@ def in_Form_Bomb_Enemy_Cities(enemyCities):
 def in_Form_Ecology():
     keyboard = InlineKeyboardBuilder()
     keyboard.add(
-        InlineKeyboardButton(text="Экологии x1", callback_data="ecology_add"),
+        InlineKeyboardButton(text="Экологии +1", callback_data="ecology_add"),
         InlineKeyboardButton(text="Очистить", callback_data="ecology_remove")
     )
     keyboard.add(
@@ -116,6 +116,20 @@ def in_Form_Sanctions(enemyCountries):
             InlineKeyboardButton(text=f"{enemy['title']}", callback_data=f"country_sanctions_{enemy['countryId']}")
         )
     keyboard.add(
+        InlineKeyboardButton(text="<< Меню", callback_data="shield_menu")
+    )
+    keyboard.adjust(1)
+    return keyboard.as_markup()
+
+
+def in_Form_MoneyTransfer(enemyCountries):
+    keyboard = InlineKeyboardBuilder()
+    for enemy in enemyCountries:
+        keyboard.add(
+            InlineKeyboardButton(text=f"{enemy['title']}", callback_data=f"country_moneytransfer_{enemy['countryId']}")
+        )
+    keyboard.add(
+        InlineKeyboardButton(text="Очистить переводы", callback_data="moneyTransfer_clear"),
         InlineKeyboardButton(text="<< Меню", callback_data="shield_menu")
     )
     keyboard.adjust(1)

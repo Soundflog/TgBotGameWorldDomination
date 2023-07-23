@@ -1,8 +1,5 @@
-from contextlib import suppress
-
 from aiogram import Router
 from aiogram.enums import ParseMode
-from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import CallbackQuery
 
 from buttons.inlinebuttons.FormMainButton import in_Form_Sanctions
@@ -23,7 +20,7 @@ async def sanctions_menu_callback(call: CallbackQuery, state: CountryStates.main
                     f"👎<b>САНКЦИИ</b>👎\n\n"
     for enemyCountry in country_Info['enemyCountries']:
         textForEdited += f"<b>{enemyCountry['title']}</b>\n" \
-                         f"Санкция: {enemyCountry['sanctions']}\n\n"
+                         f"Санкция: {'👍🏻' if enemyCountry['sanctions'] else '👎'}\n\n"
     selected_country_sanctions = user_data.get('sanctions')
     if selected_country_sanctions is not None:
         selected_country_sanctions = user_data['sanctions']

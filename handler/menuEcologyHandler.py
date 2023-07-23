@@ -55,7 +55,6 @@ async def ecology_x_callback(call: CallbackQuery, state: CountryStates.main_keyb
         country_Info['balanceInfo'] -= 150
     else:
         if len(ecology_list) >= 3:
-            print(f"len ecology list: {len(ecology_list)}")
             await call.answer(
                 text="Больше 3 раз вложиться нельзя"
             )
@@ -73,7 +72,7 @@ async def ecology_x_callback(call: CallbackQuery, state: CountryStates.main_keyb
                     f"Экология x1 --- <b> 150 💲</b>\n" \
                     f"Экология x2 --- <b> 300 💲</b>\n" \
                     f"Экология x3 --- <b> 450 💲</b>\n\n" \
-                    f"Кол-во вложений в экологию: {country_Info['ecology']}"
+                    f"<i>Кол-во вложений в экологию: <b>{country_Info['ecology']}</b></i>"
     await state.update_data(ecology_x=ecology_list)
     with suppress(TelegramBadRequest):
         await call.message.edit_text(

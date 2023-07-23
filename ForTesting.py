@@ -1,3 +1,4 @@
+import config.configurations
 
 testKeyboard = [[], [], [], []]
 city_info = [
@@ -57,3 +58,5 @@ if 3 >= len(listTest) > 0:
     listTest.remove(1)
     print(f"list less 3: {len(listTest)}")
 print(listTest)
+
+print(f"\n\n id: {config.configurations.admins['id']}")

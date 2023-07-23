@@ -1,6 +1,11 @@
 from aiogram.fsm.state import StatesGroup, State
 
 
+class PlayersStates(StatesGroup):
+    player = State()
+    curator = State()
+
+
 class WorldStates(StatesGroup):
     after_choose_world = State()
     country = State()

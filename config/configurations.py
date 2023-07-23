@@ -7,6 +7,5 @@ REQUEST_URL_FORM = "http://7d930619ea13.vps.myjino.ru:49335/api/form"
 
 # dic admins
 admins = {
-    "400867015",
-    "766668581"
+    "id": "766668581"
 }

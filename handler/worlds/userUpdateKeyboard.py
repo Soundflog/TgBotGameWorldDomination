@@ -4,9 +4,9 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 import requests as r
 
-from buttons.inlinebuttons.chooseWorld import in_World_menu
+from buttons.inlinebuttons.chooseWorld import in_World_menu, in_Player_or_Curator
 from config.configurations import REQUEST_URL_GAME, REQUEST_URL_WORLD
-from states.WorldStates import WorldStates
+from states.WorldStates import WorldStates, PlayersStates
 
 router = Router()
 
@@ -14,7 +14,7 @@ router = Router()
 # router.message.middleware(WeekendCallbackMiddleware())
 # router.callback_query.middleware(WeekendCallbackMiddleware())
 
-
+# world_
 @router.callback_query(lambda c: c.data.startswith('world_'))
 async def update_keyboard_worlds(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.message.edit_reply_markup()
@@ -31,7 +31,27 @@ async def update_keyboard_worlds(callback_query: CallbackQuery, state: FSMContex
              f"{world['title']}\n\n"
              f"🗺️ Выберите страну",
         inline_message_id=callback_query.inline_message_id,
+        # reply_markup=in_Player_or_Curator()
         reply_markup=in_World_menu(world['id'])
     )
 
 
+# @router.callback_query(lambda c: c.data == "player", WorldStates.after_choose_world)
+# async def player_callback(call: CallbackQuery, state: WorldStates.after_choose_world):
+#     await call.message.edit_reply_markup()
+#     await call.message.edit_text(
+#         text="Вы присоединились в игру как игрок",
+#         inline_message_id=call.inline_message_id,
+#         reply_markup=in_World_menu(world['id'])
+#     )
+#
+#
+# @router.callback_query(lambda c: c.data == "curator")
+# async def curator_callback(call: CallbackQuery, state: FSMContext):
+#     await call.message.edit_reply_markup()
+#     await state.set_state(PlayersStates.curator)
+#     await call.message.edit_text(
+#         text="Вы присоединились в игру как игрок",
+#         inline_message_id=call.inline_message_id,
+#         reply_markup=in_Choose_World()
+#     )

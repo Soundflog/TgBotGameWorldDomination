@@ -1,3 +1,5 @@
+import datetime
+
 import requests as r
 from aiogram import Router
 from aiogram.enums import ParseMode
@@ -62,7 +64,9 @@ async def message_handler_country(message: Message, state: CountryStates.passwor
             )
             await state.clear()
             await state.set_state(CountryStates.main_keyboard)
-            await state.update_data(form=getFormCountry, world=world)
+            await state.update_data(form=getFormCountry,
+                                    world=world,
+                                    throttling=datetime.datetime.utcnow() - datetime.timedelta(seconds=15))
             return
         await message.answer(text=f"Код ошибки:\n{answerFromPassword.status_code}")
 
