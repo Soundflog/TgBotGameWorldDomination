@@ -9,6 +9,7 @@ def in_Form_Main_Keyboard():
         InlineKeyboardButton(text="🛡️ Поставить щит 🛡️", callback_data="main_shield"),
         InlineKeyboardButton(text="☢️ Ядерная программа ☢️", callback_data="main_nuclearProgram"),
         InlineKeyboardButton(text="🌱 Экология 🌱", callback_data="main_ecology"),
+        InlineKeyboardButton(text="👎 Санкции 👎", callback_data="main_sanctions"),
         InlineKeyboardButton(text="💰 Перевод денег 💰", callback_data="main_moneyTransfer"),
         InlineKeyboardButton(text="📣 Позвать ведущего 📣", callback_data="main_call"),
         InlineKeyboardButton(text="✅ Подвердить ✅", callback_data="main_access"),
@@ -101,6 +102,19 @@ def in_Form_Ecology():
         InlineKeyboardButton(text="Экологии x1", callback_data="ecology_add"),
         InlineKeyboardButton(text="Очистить", callback_data="ecology_remove")
     )
+    keyboard.add(
+        InlineKeyboardButton(text="<< Меню", callback_data="shield_menu")
+    )
+    keyboard.adjust(1)
+    return keyboard.as_markup()
+
+
+def in_Form_Sanctions(enemyCountries):
+    keyboard = InlineKeyboardBuilder()
+    for enemy in enemyCountries:
+        keyboard.add(
+            InlineKeyboardButton(text=f"{enemy['title']}", callback_data=f"country_sanctions_{enemy['countryId']}")
+        )
     keyboard.add(
         InlineKeyboardButton(text="<< Меню", callback_data="shield_menu")
     )
