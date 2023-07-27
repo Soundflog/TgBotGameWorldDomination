@@ -97,7 +97,7 @@ async def callback_shield_back_to_menu(call: CallbackQuery, state: CountryStates
                     f"🗺️ Страна 🗺️\n" \
                     f"<b>{country_Info['title']}</b>\n\n" \
                     f"💸 Баланс: <b>{country_Info['balanceInfo']} 💲</b>\n" \
-                    f"🚀 Ракет: <b>{country_Info['rocket']}</b> | {country_Info['rocketInfo']}\n\n" \
+                    f"🚀 Ракет: <b>{country_Info['rocketInfo']}</b> | {country_Info['rocket']}\n\n" \
                     f"🏙️ Города 🏙️\n"
     for city in city_Info:
         textForEdited += f"<b>{city['title'] if city['condition'] else '<s>' + city['title'] + '</s>'}</b>\n" \

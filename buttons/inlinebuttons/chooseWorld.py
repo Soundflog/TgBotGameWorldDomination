@@ -19,7 +19,6 @@ def in_Choose_World():
     keyboard = InlineKeyboardBuilder()
     worlds = r.get(f"{REQUEST_URL_GAME}/worlds").json()
     for world in worlds['worlds']:
-        print(f"world = {world}")
         keyboard.add(
             InlineKeyboardButton(text=f"{world['title']}", callback_data=f"world_{world['id']}")
         )

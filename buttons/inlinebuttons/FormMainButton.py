@@ -13,6 +13,7 @@ def in_Form_Main_Keyboard():
         InlineKeyboardButton(text="💰 Перевод денег 💰", callback_data="main_moneyTransfer"),
         InlineKeyboardButton(text="📣 Позвать ведущего 📣", callback_data="main_call"),
         InlineKeyboardButton(text="✅ Подвердить ✅", callback_data="main_access"),
+        InlineKeyboardButton(text="🔄 Обновить 🔄", callback_data="main_update"),
     )
     keyboard.adjust(1)
     return keyboard.as_markup()
