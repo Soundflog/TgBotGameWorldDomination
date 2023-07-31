@@ -27,7 +27,7 @@ def in_Form_Development_TrueFalse(city_info):
                 InlineKeyboardButton(text=f'{city["title"]}', callback_data=f"city_development_{city['cityId']}")
             )
     keyboard.add(
-        InlineKeyboardButton(text='<< Меню', callback_data="dev_menu")
+        InlineKeyboardButton(text='<< Меню', callback_data="shield_menu")
     )
     keyboard.adjust(1)
     return keyboard.as_markup()

@@ -4,6 +4,7 @@ from aiogram.types import CallbackQuery
 
 from buttons.inlinebuttons.FormMainButton import in_Form_Main_Keyboard, \
     in_Form_Shield_TrueFalse
+from methods.ReCalcBalance import RocketCalc, BalanceInNewRound, BalanceCalc
 from states.WorldStates import CountryStates
 
 router = Router()
@@ -17,6 +18,7 @@ async def shield_menu_callback(call: CallbackQuery, state: CountryStates.main_ke
     getFormCountry = user_data['form']
     country_Info = getFormCountry['form']
     city_Info = country_Info['friendlyCities']
+    BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
     textForEdited = f"🗺️ Страна 🗺️\n" \
                     f"{country_Info['title']}\n" \
                     f"💸 {country_Info['balanceInfo']}💲\n\n" \
@@ -64,6 +66,7 @@ async def callback_city_shield(call: CallbackQuery, state: CountryStates.main_ke
                 text=f"Убран щит на город {city['title']}"
             )
             continue
+    BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
     textForEdited = f"🗺️ Страна 🗺️\n{country_Info['title']}\n" \
                     f"💸{country_Info['balanceInfo']} 💲\n\n" \
                     f"🛡️<b>Щиты</b>🛡️\n" \
@@ -85,22 +88,26 @@ async def callback_city_shield(call: CallbackQuery, state: CountryStates.main_ke
 @router.callback_query(lambda c: c.data == "shield_menu", CountryStates.main_keyboard)
 async def callback_shield_back_to_menu(call: CallbackQuery, state: CountryStates.main_keyboard):
     await call.message.edit_reply_markup()
-
     user_data = await state.get_data()
     world = user_data['world']
+    ecology = world['ecology']
     getFormCountry = user_data['form']
     country_Info = getFormCountry['form']
     city_Info = country_Info['friendlyCities']
+    rockets = RocketCalc(country_Info)
+    incomeBalance = BalanceInNewRound(country_Info, ecology)
+    BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
     textForEdited = f"🌍 Мир 🌍\n" \
-                    f"{world['title']}\n" \
-                    f"🌱 Экология: <b>{round(world['ecology'], 2)} %</b>\n\n" \
+                    f"{world['title']}\n\n" \
+                    f"🌱 Экология: <b>{round(ecology, 2)} %</b>\n\n" \
                     f"🗺️ Страна 🗺️\n" \
                     f"<b>{country_Info['title']}</b>\n\n" \
-                    f"💸 Баланс: <b>{country_Info['balanceInfo']} 💲</b>\n" \
-                    f"🚀 Ракет: <b>{country_Info['rocketInfo']}</b> | {country_Info['rocket']}\n\n" \
+                    f"💸 Баланс: <b>{country_Info['balanceInfo']}</b> $ (+<b>{round(incomeBalance)}</b> $)\n" \
+                    f"🚀 Ракет: <b>{rockets}</b> | {country_Info['rocket']}\n\n" \
                     f"🏙️ Города 🏙️\n"
     for city in city_Info:
         textForEdited += f"<b>{city['title'] if city['condition'] else '<s>' + city['title'] + '</s>'}</b>\n" \
+                         f"🌿 Ур. жизни: {city['lifestandard']} %\n" \
                          f"🛡️ Щит: {'✔️ ' if city['shieldInfo'] else '❌'} ---> {'✔️' if city['shield'] else '❌'}\n\n"
     await call.message.edit_text(
         text=textForEdited,

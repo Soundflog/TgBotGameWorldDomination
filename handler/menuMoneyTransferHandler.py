@@ -4,6 +4,7 @@ from aiogram.types import CallbackQuery, Message
 
 from buttons.inlinebuttons.FormMainButton import in_Form_MoneyTransfer
 from methods import ReCalcBalance
+from methods.ReCalcBalance import BalanceCalc
 from states.WorldStates import CountryStates
 
 router = Router()
@@ -16,6 +17,7 @@ async def moneyTransfer_menu_callback(call: CallbackQuery, state: CountryStates.
     user_data = await state.get_data()
     getFormCountry = user_data['form']
     country_Info = getFormCountry['form']
+    BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
     textForEdited = f"🗺️ Страна 🗺️\n" \
                     f"{country_Info['title']}\n" \
                     f"💸 Баланс: {country_Info['balanceInfo']} 💲\n\n" \

@@ -7,6 +7,7 @@ from aiogram.types import CallbackQuery, Message
 
 from buttons.inlinebuttons.FormMainButton import in_Form_Main_Keyboard
 from config.configurations import REQUEST_URL_WORLD, REQUEST_URL_FORM
+from methods.ReCalcBalance import RocketCalc, BalanceInNewRound, BalanceCalc
 from states.WorldStates import WorldStates, CountryStates
 
 router = Router()
@@ -33,6 +34,7 @@ async def message_handler_country(message: Message, state: CountryStates.passwor
     if message.text:
         user_data = await state.get_data()
         world = user_data['world']
+        ecology = world['ecology']
         country_id = user_data['country_id']
 
         dataForPost = {"id": 0, "countryid": country_id, "password": str(message.text)}
@@ -44,13 +46,16 @@ async def message_handler_country(message: Message, state: CountryStates.passwor
             city_Info = {}
             if country_Info['countryId'] == country_id:
                 city_Info = country_Info['friendlyCities']
+            incomeBalance = BalanceInNewRound(country_Info, ecology)
+            rockets = RocketCalc(country_Info)
+            BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
             textForEdited = f"🌍 Мир 🌍\n" \
-                            f"{world['title']}\n" \
-                            f"🌱 Экология: <b>{round(world['ecology'], 2)} %</b>\n\n" \
+                            f"{world['title']}\n\n" \
+                            f"🌱 Экология: <b>{round(ecology, 2)} %</b>\n\n" \
                             f"🗺️ Страна 🗺️\n" \
                             f"<b>{country_Info['title']}</b>\n\n" \
-                            f"💸 Баланс: <b>{country_Info['balanceInfo']} 💲</b>\n" \
-                            f"🚀 Ракет: <b>{country_Info['rocketInfo']}</b> + {country_Info['rocket']}\n\n" \
+                            f"💸 Баланс: <b>{country_Info['balanceInfo']}</b> $ (+<b>{round(incomeBalance)}</b> $)\n" \
+                            f"🚀 Ракет: <b>{rockets}</b> (+{country_Info['rocket']})\n\n" \
                             f"🏙️ Города 🏙️\n"
             for city in city_Info:
                 textForEdited += f"<b>{city['title'] if city['condition'] else '<s>' + city['title'] + '</s>'}</b>\n" \

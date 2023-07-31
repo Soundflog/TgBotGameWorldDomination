@@ -8,6 +8,7 @@ from aiogram.types import CallbackQuery
 from buttons.inlinebuttons.FormMainButton import in_Form_Nuclear_TrueFalse, \
     in_Form_Bomb_Enemy, in_Form_Bomb_Enemy_Cities
 from methods import ReCalcBalance
+from methods.ReCalcBalance import RocketCalc, BalanceCalc
 from states.WorldStates import CountryStates
 
 router = Router()
@@ -20,7 +21,8 @@ async def nuclear_menu_callback(call: CallbackQuery, state: CountryStates.main_k
     user_data = await state.get_data()
     getFormCountry = user_data['form']
     country_Info = getFormCountry['form']
-    city_Info = country_Info['friendlyCities']
+    rockets = RocketCalc(country_Info)
+    BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
     textForEdited = f"🗺️ Страна 🗺️\n" \
                     f"{country_Info['title']}\n" \
                     f"💸 {country_Info['balanceInfo']} 💲\n\n" \
@@ -30,7 +32,7 @@ async def nuclear_menu_callback(call: CallbackQuery, state: CountryStates.main_k
                     f"Ракета --- <b> 150 💲</b>\n\n"
     textForEdited += f"Развита ядерная программа: {'✔️' if country_Info['nuclearProgramInfo'] else '❌'} " \
                      f"---> {'✔️' if country_Info['nuclearProgram'] else '❌'}\n" \
-                     f"Ракет: {country_Info['rocketInfo']} ---> {country_Info['rocket']}"
+                     f"Ракет: {rockets} ---> {country_Info['rocket']}"
     await call.message.edit_text(
         text=textForEdited,
         parse_mode=ParseMode.HTML,
@@ -54,6 +56,8 @@ async def callback_nuclear_development(call: CallbackQuery, state: CountryStates
         country_Info['nuclearProgram'] = False
         country_Info['balanceInfo'] += 500
 
+    rockets = RocketCalc(country_Info)
+    BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
     textForEdited = f"🗺️ Страна 🗺️\n" \
                     f"{country_Info['title']}\n" \
                     f"💸 {country_Info['balanceInfo']} 💲\n\n" \
@@ -63,7 +67,7 @@ async def callback_nuclear_development(call: CallbackQuery, state: CountryStates
                     f"Ракета --- <b> 150 💲</b>\n\n"
     textForEdited += f"Развитие ядерной программы: {'✔️' if country_Info['nuclearProgramInfo'] else '❌'} " \
                      f"---> {'✔️' if country_Info['nuclearProgram'] else '❌'}\n" \
-                     f"Ракет: {country_Info['rocketInfo']} ---> {country_Info['rocket']}"
+                     f"Ракет: {rockets} ---> {country_Info['rocket']}"
     # {'✔️' if city['shieldInfo'] else '❌'} ---> {'✔️' if city['shield'] else '❌'}
     await call.message.edit_text(
         text=textForEdited,
@@ -91,7 +95,6 @@ async def callback_nuclear_add(call: CallbackQuery, state: CountryStates.main_ke
         count_rocket_add = user_data['selectedRocketAdd']
     else:
         count_rocket_add = country_Info['rocket']
-    # TODO: *FIX* длина массива проходить if всегда
     if country_Info['nuclearProgramInfo'] is True and count_rocket_add < 3:
         country_Info['rocket'] += 1
         country_Info['balanceInfo'] -= 150
@@ -99,6 +102,7 @@ async def callback_nuclear_add(call: CallbackQuery, state: CountryStates.main_ke
         await call.answer(
             text="+1 Ракета"
         )
+        rockets = RocketCalc(country_Info)
         textForEdited = f"🗺️ Страна 🗺️\n" \
                         f"{country_Info['title']}\n" \
                         f"💸 {country_Info['balanceInfo']} 💲\n\n" \
@@ -109,7 +113,7 @@ async def callback_nuclear_add(call: CallbackQuery, state: CountryStates.main_ke
         textForEdited += f"Развита ядерная программа: " \
                          f"{'✔️' if country_Info['nuclearProgramInfo'] else '❌'} ---> " \
                          f"{'✔️' if country_Info['nuclearProgram'] else '❌'}\n" \
-                         f"Ракет: {country_Info['rocketInfo']} ---> {country_Info['rocket']}"
+                         f"Ракет: {rockets} ---> {country_Info['rocket']}"
         await call.message.edit_text(
             text=textForEdited,
             parse_mode=ParseMode.HTML,
@@ -149,6 +153,7 @@ async def callback_nuclear_remove(call: CallbackQuery, state: CountryStates.main
             text="-1 Ракета"
         )
         ReCalcBalance.BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
+        rockets = RocketCalc(country_Info)
         textForEdited = f"🗺️ Страна 🗺️\n" \
                         f"{country_Info['title']}\n" \
                         f"💸 {country_Info['balanceInfo']} 💲\n\n" \
@@ -159,7 +164,7 @@ async def callback_nuclear_remove(call: CallbackQuery, state: CountryStates.main
         textForEdited += f"Развита ядерная программа: " \
                          f"{'✔️' if country_Info['nuclearProgramInfo'] else '❌'} ---> " \
                          f"{'✔️' if country_Info['nuclearProgram'] else '❌'}\n" \
-                         f"Ракет: {country_Info['rocketInfo']} ---> {country_Info['rocket']}"
+                         f"Ракет: {rockets} ---> {country_Info['rocket']}"
 
         await call.message.edit_text(
             text=textForEdited,
@@ -181,6 +186,7 @@ async def callback_nuclear_bomb(call: CallbackQuery, state: CountryStates.main_k
     getFormCountry = user_data['form']
     country_Info = getFormCountry['form']
     ReCalcBalance.BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
+    rockets = RocketCalc(country_Info)
     textForEdited = f"🗺️ Страна 🗺️\n" \
                     f"{country_Info['title']}\n" \
                     f"💸 {country_Info['balanceInfo']} 💲\n\n" \
@@ -191,7 +197,7 @@ async def callback_nuclear_bomb(call: CallbackQuery, state: CountryStates.main_k
     textForEdited += f"Развита ядерная программа: " \
                      f"{'✔️' if country_Info['nuclearProgramInfo'] else '❌'} ---> " \
                      f"{'✔️' if country_Info['nuclearProgram'] else '❌'}\n" \
-                     f"Ракет: {country_Info['rocketInfo']} + {country_Info['rocket']}\n\n" \
+                     f"Ракет: {rockets} + {country_Info['rocket']}\n\n" \
                      f"<i>Кол-во ракет считается: кол-во ракет с прошлого раунда + кол-во ракет в производстве</i>"
 
     await call.message.edit_text(
@@ -213,11 +219,12 @@ async def callback_nuclear_bomb_to_country(call: CallbackQuery, state: CountrySt
     enemy_Countries = country_Info['enemyCountries']
     textForEdited = "Произошла ошибка"
     enemy_cities = []
+    rockets = RocketCalc(country_Info)
     for enemyCountry in enemy_Countries:
         if enemyCountry['countryId'] == country_id_for_bomb:
             textForEdited = f"💥 БОМБИТЬ 💥\n" \
                             f"<b>{enemyCountry['title']}</b>\n" \
-                            f"🚀 Кол-во ракет: {country_Info['rocketInfo']}\n\n" \
+                            f"🚀 Кол-во ракет: {rockets}\n\n" \
                             f"🏙️ ГОРОДА 🏙️\n"
             for enemyCity in enemyCountry['enemyCities']:
                 enemy_cities.append(enemyCity)
@@ -251,24 +258,23 @@ async def callback_nuclear_bomb_to_city(call: CallbackQuery, state: CountryState
             enemyCountryById.update(enemyCountry)
             for city_enemy in enemyCountry['enemyCities']:
                 if city_enemy['cityId'] == city_id_for_bomb:
-                    if city_enemy['bomb'] is False and country_Info['rocketInfo'] > 0:
-                        country_Info['rocketInfo'] -= 1
+                    if city_enemy['bomb'] is False:
                         city_enemy['bomb'] = True
                     elif city_enemy['bomb'] is True:
-                        country_Info['rocketInfo'] += 1
                         city_enemy['bomb'] = False
                 enemy_cities.append(city_enemy)
+    rockets = RocketCalc(country_Info)
     ReCalcBalance.BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
     txtForEdited = f"💥 БОМБИТЬ 💥\n" \
                    f"<b>{enemyCountryById['title']}</b>\n\n" \
-                   f"🚀 Кол-во ракет: {country_Info['rocketInfo']}\n\n" \
+                   f"🚀 Кол-во ракет: {rockets}\n\n" \
                    f"🏙️ ГОРОДА 🏙️\n"
     for eCity in enemy_cities:
         txtForEdited += f"<b>{eCity['title'] if eCity['condition'] else '<s>' + eCity['title'] + '</s>'}</b>\n" \
                         f"🌿 Ур. жизни: {eCity['lifestandard']} %\n" \
                         f"💣 Отправлена бомба: {'✔️' if eCity['bomb'] else '❌'}\n\n"
     await call.answer(
-        text=f"Ракет: {country_Info['rocketInfo']}"
+        text=f"Ракет: {rockets}"
     )
     with suppress(TelegramBadRequest):
         await call.message.edit_text(

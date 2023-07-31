@@ -19,3 +19,19 @@ def BalanceCalc(countryInfo: dict, balance):
         countryInfo['balanceInfo'] -= eCountry['moneyTransfer']
 
 
+def RocketCalc(countryInfo):
+    enemy_Countries = countryInfo['enemyCountries']
+    countRockets = 0
+    for enemyCountry in enemy_Countries:
+        for eCity in enemyCountry['enemyCities']:
+            if eCity['bomb'] is True:
+                countRockets += 1
+
+    return countryInfo['rocketInfo'] - countRockets
+
+
+def BalanceInNewRound(countryInfo, ecology):
+    newBalance = 0
+    for frCity in countryInfo['friendlyCities']:
+        newBalance += frCity['lifestandard'] * 3 * ecology / 100
+    return newBalance
