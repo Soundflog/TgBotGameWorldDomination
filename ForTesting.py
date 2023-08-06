@@ -49,10 +49,12 @@ for i, (city, button) in enumerate(zip(city_info, testKeyboard)):
     button.append("+1")
 
 
+lifestandard = []
+for c in city_info:
+    lifestandard.append(c['lifestandard'])
 
 
-
-
+print(f"AVERAGE LIFESTANDARD: {round(sum(lifestandard)/4)}")
 
 
 

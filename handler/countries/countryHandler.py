@@ -49,18 +49,25 @@ async def message_handler_country(message: Message, state: CountryStates.passwor
             incomeBalance = BalanceInNewRound(country_Info, ecology)
             rockets = RocketCalc(country_Info)
             BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
+            averageLifeStandardList = []
+            for c in city_Info:
+                averageLifeStandardList.append(c['lifestandard'])
             textForEdited = f"🌍 Мир 🌍\n" \
                             f"{world['title']}\n\n" \
                             f"🌱 Экология: <b>{round(ecology, 2)} %</b>\n\n" \
                             f"🗺️ Страна 🗺️\n" \
                             f"<b>{country_Info['title']}</b>\n\n" \
                             f"💸 Баланс: <b>{country_Info['balanceInfo']}</b> $ (+<b>{round(incomeBalance)}</b> $)\n" \
-                            f"🚀 Ракет: <b>{rockets}</b> (+{country_Info['rocket']})\n\n" \
+                            f"🚀 Ракет: <b>{rockets}</b> (+{country_Info['rocket']})\n" \
+                            f"🌿 Ур. жизни: <b>{round(sum(averageLifeStandardList)*ecology/400)}</b>\n\n" \
                             f"🏙️ Города 🏙️\n"
             for city in city_Info:
                 textForEdited += f"<b>{city['title'] if city['condition'] else '<s>' + city['title'] + '</s>'}</b>\n" \
-                                 f"🌿 Ур. жизни: {city['lifestandard']} %\n" \
-                                 f"🛡️ Щит: {'✔️ ' if city['shieldInfo'] else '❌'} ---> {'✔️' if city['shield'] else '❌'}\n\n"
+                                 f"🌿 Развитие: {str(city['lifestandard']) + ' + 20 ' if city['development'] else city['lifestandard']} %\n" \
+                                 f"🛡️ Щит: {'✔️ ' if city['shieldInfo'] else '❌'} --->" \
+                                 f" {'✔️' if city['shield'] or city['shieldInfo'] else '❌'}\n\n"
+            textForEdited += "<i>Ведущий сообщит Вам об окончании раунда, пожалуйста нажмите кнопку <b>Обновить</b> " \
+                             "после завершения раунда</i>"
             await message.delete()
             await message.answer(
                 text=textForEdited,

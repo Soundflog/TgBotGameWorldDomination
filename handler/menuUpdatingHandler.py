@@ -57,6 +57,7 @@ async def update_menu_callback(call: CallbackQuery, state: CountryStates.main_ke
         textForEdited += f"<b>{city['title'] if city['condition'] else '<s>' + city['title'] + '</s>'}</b>\n" \
                          f"🌿 Ур. жизни: {city['lifestandard']} %\n" \
                          f"🛡️ Щит: {'✔️ ' if city['shieldInfo'] else '❌'} ---> {'✔️' if city['shield'] else '❌'}\n\n"
+    textForEdited += "<i>Ведущий сообщит Вам об окончании раунда</i>"
     with suppress(TelegramBadRequest):
         await call.message.edit_text(
             text=textForEdited,

@@ -20,7 +20,7 @@ async def sanctions_menu_callback(call: CallbackQuery, state: CountryStates.main
                     f"👎<b>САНКЦИИ</b>👎\n\n"
     for enemyCountry in country_Info['enemyCountries']:
         textForEdited += f"<b>{enemyCountry['title']}</b>\n" \
-                         f"Санкция: {'👍🏻' if enemyCountry['sanctions'] else '👎'}\n\n"
+                         f"Санкция: {'➖' if enemyCountry['sanctions'] else '👎'}\n\n"
     selected_country_sanctions = user_data.get('sanctions')
     if selected_country_sanctions is not None:
         selected_country_sanctions = user_data['sanctions']
@@ -29,8 +29,8 @@ async def sanctions_menu_callback(call: CallbackQuery, state: CountryStates.main
     for enemyCountry in country_Info['enemyCountries']:
         if enemyCountry['sanctions'] is True:
             selected_country_sanctions.append(enemyCountry['countryId'])
-    textForEdited += "<i>👍🏻 - Санкция наложена</i>\n" \
-                     "<i>👎 - Санкции нет</i>\n"
+    textForEdited += "<i>👎 - Санкция наложена</i>\n" \
+                     "<i>➖ - Санкции нет</i>\n"
     await state.update_data(sanctions=selected_country_sanctions)
     await call.message.edit_text(
         text=textForEdited,
@@ -68,9 +68,9 @@ async def choose_enemy_country_sanctions_callback(call: CallbackQuery, state: Co
                 selected_country_sanctions.remove(enemyCountry['countryId'])
                 enemyCountry['sanctions'] = False
         textForEdited += f"<b>{enemyCountry['title']}</b>\n" \
-                         f"Санкция: {'👍🏻' if enemyCountry['sanctions'] else '👎'}\n\n"
-    textForEdited += "<i>👍🏻 - Санкция наложена</i>\n" \
-                     "<i>👎 - Санкции нет</i>\n"
+                         f"Санкция: {'➖' if enemyCountry['sanctions'] else '👎'}\n\n"
+    textForEdited += "<i>👎 - Санкция наложена</i>\n" \
+                     "<i>➖ - Санкции нет</i>\n"
     await state.update_data(sanctions=selected_country_sanctions)
     await call.message.edit_text(
         text=textForEdited,
