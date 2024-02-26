@@ -1,11 +1,11 @@
 
-TOKEN = "5311104145:AAF2iwSJDqmiOCH5LSFUnPOLnmXtruHrTDk"
+TOKEN = "Enter YOUR Token"
 
-REQUEST_URL_GAME = "http://7d930619ea13.vps.myjino.ru:49335/api/game"
-REQUEST_URL_WORLD = "http://7d930619ea13.vps.myjino.ru:49335/api/world"
-REQUEST_URL_FORM = "http://7d930619ea13.vps.myjino.ru:49335/api/form"
+REQUEST_URL_GAME = "Enter URL Request from Back-end, what can handle GAME"
+REQUEST_URL_WORLD = "Enter URL Request from Back-end, what can handle WORLD"
+REQUEST_URL_FORM = "Enter URL Request from Back-end, what can handle FORM"
 
-# dic admins
+# enter your id telegram for Admins
 admins = {
-    "id": "766668581"
+    "id": "000"
 }
