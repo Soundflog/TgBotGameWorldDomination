@@ -5,7 +5,7 @@ def BalanceCalc(countryInfo: dict, balance):
     for fCity in countryInfo['friendlyCities']:
         if fCity['development']:
             countDevelop += 1
-        if fCity['shieldInfo'] is False and fCity['shield']:
+        if fCity['shieldInfo'] is False and fCity['shield'] is True:
             countShield += 1
 
     countryInfo['balanceInfo'] -= countDevelop * 150

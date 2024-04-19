@@ -1,4 +1,5 @@
 from aiogram import Router
+from aiogram.enums import ParseMode
 from aiogram.filters import Command
 from aiogram.types import Message
 
@@ -18,6 +19,8 @@ async def start(message: Message):
 
     # проверка на админа
     # if user_id in admins:
-    await message.answer(text="ДОБРО ПОЖАЛОВАТЬ В ИГРУ МИРОВОЕ ГОСПОДСТВО",
+    await message.answer(text="ДОБРО ПОЖАЛОВАТЬ В ИГРУ \n\n🌍 <b>МИРОВОЕ ГОСПОДСТВО</b> 🌍\n\n"
+                              "<i>Выберите <b>МИР</b> для подключения</i>",
+                         parse_mode=ParseMode.HTML,
                          reply_markup=in_Choose_World())
 

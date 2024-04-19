@@ -51,23 +51,25 @@ async def callback_city_shield(call: CallbackQuery, state: CountryStates.main_ke
     else:
         selected_cities_shield = []
         # for fCity in country_Info['friendlyCities']:
-        #     if fCity['shieldInfo'] is True:
+        #     if fCity['shield'] is True:
         #         selected_cities_shield.append(fCity)
     for city in city_Info:
         if city["cityId"] == city_id and city['shield'] is False:
-            country_Info['balanceInfo'] -= 300
+            # country_Info['balanceInfo'] -= 300
             city['shield'] = True
             selected_cities_shield.append(city)
             await call.answer(
                 text=f"Поставлен щит на город {city['title']}"
             )
+            continue
         if city["cityId"] == city_id and city['shield'] is True:
-            country_Info['balanceInfo'] += 300
+            # country_Info['balanceInfo'] += 300
             city['shield'] = False
             selected_cities_shield.remove(city)
             await call.answer(
                 text=f"Убран щит на город {city['title']}"
             )
+            continue
     BalanceCalc(country_Info, getFormCountry['countryInfo']['balance'])
     textForEdited = f"🗺️ Страна 🗺️\n{country_Info['title']}\n" \
                     f"💸{country_Info['balanceInfo']} 💲\n\n" \
@@ -76,7 +78,7 @@ async def callback_city_shield(call: CallbackQuery, state: CountryStates.main_ke
     for city in city_Info:
         textForEdited += f"<b>{city['title'] if city['condition'] else '<s>' + city['title'] + '</s>'}</b>\n" \
                          f"🛡️ Щит: {'✔️ ' if city['shieldInfo'] else '❌'} ---> " \
-                         f"{'✔️' if city['shield'] or city['shieldInfo'] else '❌'}\n\n"
+                         f"{'✔️' if city['shield'] else '❌'}\n\n"
 
     await call.message.edit_text(
         text=textForEdited,
